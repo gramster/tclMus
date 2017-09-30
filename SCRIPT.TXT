@@ -1,0 +1,83 @@
+       tclmus - tcl extensions for musical experimentation
+
+                       The tcl Extensions
+
+                        by Graham Wheeler
+                        gram@cdsec.com
+
+
+
+
+Note: It is assumed you have read or at least browsed the CLASSES.TXT
+      file before reading this file.
+
+
+1.  Overview
+
+2.  Basic Sources
+
+// makesound noise <length>
+// makesound constant <value> <length>
+// makesound sinewave <freq> <length>
+// makesound squarewave <freq> <length>
+// makesound triwave <freq> <length>
+// makesound sawwave <freq> <length>
+//
+// makesound sample <filename> [ <bits> <rate> ]
+
+3.  Basic Filters
+
+// makefilter reverse <sourcename> reverse
+// makefilter offset <sourcename> offset <count>
+// makefilter loop <sourcename> loop <count>
+// makefilter echo <sourcename> echo <length> <level>
+// makefilter multiecho <sourcename> multiecho <length> <level>
+// makefilter amplify <sourcename> <volume>
+// makefilter freqshift <sourcename> <multiplier> <divider>
+// makefilter transpose <sourcename> <note> <octave>
+
+4.  Envelopes
+
+// makefilter clipenvelope <sourcename> <scale> <release_endpoint>
+// makefilter renvelope <sourcename> <scale> <release_endpoint>
+// makefilter srenvelope <sourcename> <scale> <sustain> <release>
+// makefilter adsrenvelope <sourcename> <scale> <attack> <decay> 
+//				<decaylevel> <sustain> <release>
+
+
+5.  Modulators
+
+// modulate <sourcename> add <sourcename>
+// modulate <sourcename> subtract <sourcename>
+// modulate <sourcename> multiply <sourcename>
+
+6.  Mixers
+
+// makemixer <nchannels>
+// setinput <mixername> <channelnum> <sourcename>
+// setvolume <mixername> <channelnum> <volume>
+
+7. Sequencers
+
+// makesequence ( multi | piano | retrigger )
+// addsource <sequencename> <sourcename> <start>
+
+8.  Memory Management
+
+// clonesound <name>...		Increment refcounts
+// destroysound <name>...	Decrement refcounts and free if zero
+// showsounds			Show currently allocated sounds
+//
+
+9.  Playing, Plotting, Expanding and Saving
+
+// playsound <bits> <rate> <sourcename>...
+// plotsound <sourcename>...
+// expandsound <sourcename>	Create a sample from any source
+// savesound raw8 <sourcename> <filename>
+
+
+
+
+
+

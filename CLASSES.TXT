@@ -1,0 +1,162 @@
+       tclmus - tcl extensions for musical experimentation
+
+	               The Implementation
+
+                        by Graham Wheeler
+                        gram@cdsec.com
+
+
+
+1. The Basic Design
+
+Apart from the classes to represent the DSP device (Player and Player:DSP),
+all other objects in tclmus are instances of DigitalSource. A DigitalSource
+is in effect a sample, although whether this sample is obtained from data
+in a file, or synthesised in some other way, is immaterial.
+
+In earlier versions, each DigitalSource had a sample rate and sample
+size associated with it. This approach proved unwieldy, and the current
+implementation uses a fixed sample rate and sample size for all
+DigitalSources. Samples that are read from files that have different
+characteristics are resampled to match the fixed internal values used.
+
+A common type of DigitalSource is a Filter. A Filter is a DigitalSource
+which operates on some other DigitalSource (like a unary operator).
+Examples of Filters are Echo, Reverse, and Amplify.
+
+Two special types of DigitalSource are also implemented, namely
+Mixer and Sequence. A Mixer can have multiple sources, and sums
+their waveforms. Mixers are implemented as arrays of Amplifiers.
+A Sequence is a set of DigitalSources associated with times; the
+Sequence mixes all of these sources together but staggered over
+time, according to the associated playtimes.
+
+Note: I wrote tclmus pretty much from first principles. I didn't 
+      have the details of .wav files, how to use the /dev/dsp,
+      or anything else. I got a kickstart by ripping the guts
+      out of two other programs, SOD and wavplay. 
+
+      There are quite possibly errors in the code, regarding
+      the actual values that are written to the /dev/dsp device.
+      For example, you will notice the weird Sanitise code in
+      the Player class. There were some kludges made to get 
+      tclmus to work with both the raw sample files used by
+      SOD, and with .wav files. These problems should at least
+      be confined to the code for SampleFiles and Players only.
+
+
+2. Class Hierarchy
+
+The current class hierarchy is:
+
+DigitalSource
+    Constant
+    Noise
+    SineWave
+    SquareWave
+    TriangleWave
+    SawToothWave
+    SampleFile
+	Raw8BitSample
+	WAVSample
+    Sample
+    Filter
+	Offset
+	Loop
+	Reverse
+	Echo
+	MultiEcho
+	Amplifier
+        Envelope
+	    ClipEnvelope
+	    REnvelope
+	    SREnvelope
+	    ADSREnvelope
+        Modulator
+	    Adder
+	    Subtractor
+	    Multiplier
+	FrequencyShifter
+            Transposer
+        Resampler
+    Mixer
+    Sequence
+	PianoModeSequence
+	RetriggerModeSequence
+
+
+Player
+    FilePlayer
+    DSP
+    
+
+-----------------------
+
+This document is very incomplete. Must still document each class,
+how samples are stored in the samplebank, and the reference 
+counting memory management system.
+
+3. Digital Sources
+
+4. Sample Files and the SampleBank
+
+    SampleFile
+	Raw8BitSample
+	WAVSample
+    Sample
+
+5. Synthetic Sources
+
+    Constant(value, length)
+    Noise(length)
+    SineWave(frequency, length)
+    SquareWave(frequency, length)
+    TriangleWave(frequency, length)
+    SawToothWave(frequency, length)
+
+6. Filters
+
+ 6.1 Basics of Filters
+
+ 6.2 Simple Filters
+
+	Offset
+	Loop
+	Reverse
+	Echo
+	MultiEcho
+	Amplifier
+
+ 6.3 Envelopes
+
+        Envelope
+	    ClipEnvelope
+	    REnvelope
+	    SREnvelope
+	    ADSREnvelope
+
+ 6.4 Advanced Sound Synthesis
+
+        Modulator
+	    Adder
+	    Subtractor
+	    Multiplier
+
+ 6.5 Resamplers and Transposition
+
+	FrequencyShifter
+            Transposer
+        Resampler
+
+7. Mixers and Sequencers
+
+    Mixer
+    Sequence
+	PianoModeSequence
+	RetriggerModeSequence
+
+8. Memory Management
+
+9. Playing, Plotting, Expanding and Saving
+
+

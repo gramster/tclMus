@@ -1,0 +1,21 @@
+#!./tclmus
+
+set i "v31_aggh.wav"
+set wave [makesound sample "$i" 8 8000]
+plotsound $wave
+playsound $wave
+destroysound $wave
+
+foreach i { v31_aggh.wav v31_aggl.wav v31_bd1.wav v31_bd2.wav \
+	    v31_bd3.wav v31_cl~1.wav v31_cngh.wav v31_cngl.wav \
+	    v31_cngm.wav v31_cr~1.wav v31_cwbl.wav v31_hh2.wav \
+	    v31_hhc.wav v31_hho.wav v31_ride.wav v31_rim.wav \
+	    v31_sd1.wav v31_sd2.wav v31_sd3.wav v31_sd4.wav \
+	    v31_shkr.wav v31_tm~1.wav v31_tm~2.wav v31_tomh.wav \
+	    v31_toml.wav v31_tomm.wav } {
+	puts "$i"
+	set wave [makesound sample "$i" 16 44100]
+	playsound $wave
+	destroysound $wave
+}
+

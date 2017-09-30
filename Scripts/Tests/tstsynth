@@ -1,0 +1,21 @@
+#!./tclmus
+
+#plotsound [makesound squarewave 8 8000]
+#plotsound [makesound triwave 8 8000]
+#plotsound [makesound sawwave 8 8000]
+
+set wave1 [makesound sinewave 1 8000]
+set wave3 [makefilter clipenvelope [makesound sinewave 1 8000] 2 1]
+
+set wave5 [makefilter clipenvelope [makesound sinewave 2 8000] 2 1]
+
+#plotsound $wave1 $wave3 $wave5
+set wave7b [makesequence]
+addsource $wave7b [makesound constant 127 4000] 0
+addsource $wave7b [makesound constant -127 4000] 4000
+
+plotsound $wave7b
+
+destroysound $wave1 $wave3 $wave5 $wave7b
+
+

@@ -1,0 +1,15 @@
+#!./tclmus
+
+set sine [makesound sinewave 440 8800]
+
+for {set fq 100} {$fq < 8000} {incr fq 100} {
+	puts "Freq $fq"
+	set square [makesound squarewave $fq 8000]
+	set wave [modulate [clonesound $sine] multiply $square ]
+	playsound $wave
+	destroysound $wave
+}
+
+destroysound $sine
+
+

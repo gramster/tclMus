@@ -1,0 +1,46 @@
+#!/usr/local/bin/tclmus
+
+set bass [makesound sample ../Samples/bass.8]
+
+set note1 [makefilter transpose $bass 0 2]
+set note2 [makefilter transpose [clonesound $bass] 0 3]
+set note3 [makefilter transpose [clonesound $bass] 0 4]
+
+set seq1 [makesequence]
+addsource $seq1 $note1 0
+addsource $seq1 $note2 8000
+addsource $seq1 $note3 16000
+
+puts "Seq 1"
+playsound $seq1
+
+set seq2 [makesequence]
+addsource $seq2 [clonesound $note2] 0
+addsource $seq2 [clonesound $note1] 8000
+addsource $seq2 [clonesound $note3] 16000
+
+puts "Seq 2"
+playsound $seq2
+
+set seq3 [makesequence]
+addsource $seq3 [clonesound $note3] 0
+addsource $seq3 [clonesound $note3] 8000
+addsource $seq3 [clonesound $note3] 16000
+
+puts "Seq 3"
+playsound $seq3
+
+set seq [makesequence]
+
+addsource $seq $seq1 0
+addsource $seq $seq2 16000
+addsource $seq $seq3 30000
+
+playsound $seq
+
+destroysound $seq
+
+puts "At end"
+showsounds
+
+

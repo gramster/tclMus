@@ -1,0 +1,7 @@
+#!./tclmus
+
+set synth [makesound sample junk.8]
+savesound raw8 $synth "junk"
+
+
+

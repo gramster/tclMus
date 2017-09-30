@@ -1,0 +1,36 @@
+#!./tclmus
+
+set bass [makefilter amplify [makesound sample bass.8] 25]
+set bassdrum [makesound sample bassdrum.8]
+set cymbal [makesound sample ridecym.8]
+set snare [makesound sample snare.8]
+
+set note1 [makefilter transpose $bass 0 2]
+set note2 [makefilter transpose [clonesound $bass] 4 2]
+set note3 [makefilter transpose [clonesound $bass] 5 2]
+set note4 [makefilter transpose [clonesound $bass] 4 2]
+
+set seq [makesequence]
+addsource $seq $note1 0
+addsource $seq $cymbal 0
+addsource $seq $note2 2000
+addsource $seq [clonesound $cymbal] 2000
+addsource $seq $bassdrum 2000
+addsource $seq $note3 4000
+addsource $seq [clonesound $cymbal] 4000
+addsource $seq $note4 6000
+addsource $seq [clonesound $cymbal] 6000
+addsource $seq [clonesound $bassdrum] 6000
+addsource $seq $snare 6000
+
+set song [expandsound [makefilter loop $seq 3 8000]  ]
+plotsound $song
+
+playsound $song
+
+destroysound $song
+
+puts "At end"
+showsounds
+
+

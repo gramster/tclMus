@@ -1,0 +1,37 @@
+#!./tclmus
+
+proc MakeNote {synth note octave} {
+    set rtn [makefilter transpose [clonesound $synth] $note $octave]
+    return [makefilter srenv $rtn [soundlength $rtn] 1000 2000]
+}
+    
+proc AddNote {seq note pos} {
+    addsource $seq [clonesound $note] $pos
+}
+
+set synth [makesound sample high77.8 8 8000]
+
+set note_a2 [MakeNote $synth 0 2]
+set note_c1 [MakeNote $synth 2 1]
+set note_f0 [MakeNote $synth 6 0]
+set note_e2 [MakeNote $synth 5 2]
+
+set pattern1 [makesequence piano 8 8000]
+AddNote $pattern1 $note_a2 0
+AddNote $pattern1 $note_c1 1000
+AddNote $pattern1 $note_c1 2000
+AddNote $pattern1 $note_f0 3000
+AddNote $pattern1 $note_c1 4000
+AddNote $pattern1 $note_c1 5000
+AddNote $pattern1 $note_f0 6000
+AddNote $pattern1 $note_e2 7000
+
+set song [makefilter clipenv $pattern1 [soundlength $pattern1] 8000]
+# set song $pattern1
+playsound 8 44100 $song
+#plotsound $song
+destroysound $song $note_a2 $note_c1 $note_f0 $note_e2 $synth
+showsounds
+
+
+

@@ -1,0 +1,162 @@
+#!/usr/local/bin/tclmus
+
+set auto_path "../Utils"
+#soundrate	44100
+#soundbits	16
+
+proc TestSineWave {} {
+	puts "Frequency?"
+	gets stdin x
+	set original [makesound sinewave $x [soundrate]]
+	playsound $original
+	plotsound $original
+	destroysound $original
+}
+
+proc TestNoise {} {
+	set original [makesound noise [soundrate]]
+	playsound $original
+	destroysound $original
+}
+
+proc TestBass8 {} {
+	set original [makesound sample ../Samples/bass.8]
+	playsound $original
+	destroysound $original
+}
+
+proc TestBass16 {} {
+	set original [makesound sample ../Samples/jazzbass.wav]
+	playsound $original
+	destroysound $original
+}
+
+proc TestLoop {} {
+	set original [makefilter loop [makesound sinewave 36 360] 10]
+	playsound $original
+	destroysound $original
+}
+
+proc TestADSREnvelope {} {
+	set original [makesound sinewave 36 360]
+	set shapedsound [makefilter adsrenvelope $original 360 80 30 60 140 50]
+	playsound $shapedsound
+	destroysound $shapedsound
+}
+
+proc TestLoopedADSREnvelope {} {
+	set original [makesound sinewave 36 360]
+	set shaped [makefilter adsrenvelope $original 360 80 30 60 140 50]
+	set note [makefilter loop $shaped 10]
+	playsound $note
+	destroysound $note
+}
+
+proc TestTransposedLoopedADSREnvelope {} {
+	set original [makesound sinewave 36 360]
+	set shaped [makefilter adsrenvelope $original 360 80 30 60 140 50]
+	set note [makefilter loop $shaped 10]
+	set playnote [makefilter transposer $note 0 4]
+	playsound $playnote
+	destroysound $playnote
+}
+
+proc TestMultiTransposedLoopedADSREnvelope {} {
+	for {set octave 2} {$octave < 8} {incr octave} {
+		puts [format "Octave %d" $octave]
+		set original [makesound sinewave 36 360]
+		set shaped [makefilter adsrenvelope $original 360 80 30 60 140 50]
+		set note [makefilter loop $shaped 10]
+		set playnote [makefilter transposer $note 0 $octave]
+		playsound $playnote
+		destroysound $playnote
+	}
+}
+
+proc TestMultiTransposedLoopedADSREnvelope2 {} {
+	set original [makesound sinewave 36 360]
+	set shaped [makefilter adsrenvelope $original 360 80 30 60 140 50]
+	set note [makefilter loop $shaped 10]
+
+	for {set octave 2} {$octave < 8} {incr octave} {
+		puts [format "Octave %d" $octave]
+		set playnote [makefilter transposer [clonesound $note] 0 $octave]
+		playsound $playnote
+		destroysound $playnote
+	}
+	destroysound $note
+}
+
+proc TestAmplifier {} {
+	set original [makesound sample ../Samples/bass.8]
+	set shaped [makefilter adsrenvelope $original 360 80 30 60 140 50]
+	set note [makefilter loop $shaped 4]
+
+	for {set volume 0} {$volume <= 100} {incr volume 10} {
+		puts [format "Volume %d" $volume]
+		set playnote [makefilter amplify [clonesound $note] $volume]
+		playsound $playnote
+		destroysound $playnote
+	}
+	destroysound $note
+}
+
+proc TestMixer {} {
+	set length [expr [soundrate] * 10]
+	set bass [makefilter loop [makesound sample ../Samples/jazzbass.wav] 20]
+	set wave [makesound sinewave 100 $length]
+	set mixer [makemixer 2]
+	setinput $mixer 1 [makefilter amplifier $bass 200]
+	setinput $mixer 2 [makefilter amplifier $wave 30]
+	set slice [expr [soundrate] / 100]
+	for {set x 0} {$x < $length} {incr x $slice} {
+	    set v [expr $x / ([soundrate]/20) ]
+	    if {$v > 100} {
+		set v [expr 200 - $v]
+	    }
+	    setvolume $mixer 1 $v
+	    setvolume $mixer 2 [expr 100 - $v]
+	    playsection $x $slice $mixer
+	}
+	destroysound $mixer
+}
+
+proc displaymenu {} {
+	puts "1. Sine Wave"
+	puts "2. Noise"
+	puts "3. 8-Bit Bass Sample"
+	puts "4. 16-Bit Bass Sample"
+	puts "5. Sinewave with ADSR Envelope"
+	puts "6. Looped sinewave with ADSR Envelope"
+	puts "7. Transposed looped sinewave with ADSR Envelope"
+	puts "8. Several transposed looped sinewaves with ADSR Envelope"
+	puts "9. Similar to 8 but using cloning"
+	puts "10. 8-bit Bass Sample/ADSR/Loop/Amplifier at a range of Volumes"
+	puts "11. Dynamic Mixing"
+	puts ""
+	puts "0. Quit"
+	puts ""
+	puts "Choice?"
+}
+
+set x 1
+while {$x != 0} {
+	showsounds
+	displaymenu
+	gets stdin x
+	switch $x {
+	1 { TestSineWave }
+	2 { TestNoise }
+	3 { TestBass8 }
+	4 { TestBass16 }
+	5 { TestADSREnvelope }
+	6 { TestLoopedADSREnvelope }
+	7 { TestTransposedLoopedADSREnvelope }
+	8 { TestMultiTransposedLoopedADSREnvelope }
+	9 { TestMultiTransposedLoopedADSREnvelope2 }
+	10 { TestAmplifier }
+	11 { TestMixer }
+	}
+}
+
+

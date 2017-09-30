@@ -1,0 +1,27 @@
+       tclmus - tcl extensions for musical experimentation
+
+                        by Graham Wheeler
+                        gram@cdsec.com
+                        1997
+
+
+
+
+
+This is a set of C++ classes and tcl extensions I wrote for experimenting
+with music based upon digital samples. In practice, I found the system
+too slow (on a Pentium 100), so I'm not sure what the future of tclmus
+is, if any. However, as others may find this stuff useful, I am making
+it available for general use under the Gnu Public License Agreement.
+
+Further documentation may be found in:
+
+    CLASSES.TXT  - a description of the C++ classes and implementation
+    SCRIPT.TXT - a description of the tcl extensions
+
+tclmus was written on a FreeBSD 2.2.2 system. It should port to other
+systems which have DSP devices with little or no effort. All the
+system-specific code (what little there is) can be found in the
+Drivers/dsp.cc file.
+
+

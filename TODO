@@ -1,0 +1,94 @@
+Try to reduce dependence on Length(); in particular, try to allow
+for `infinite' length.
+
+.MID file support
+
+Test all sources and effects!  So far the following seem OK:
+
+    Noise
+    SineWave
+    SquareWave
+    TriangleWave
+    SawToothWave
+    Sample
+    ClipEnvelope
+    SREnvelope
+    ADSREnvelope
+    Loop
+    Transposer
+    Amplifier
+    Mixer
+    Sequence
+
+Add more effects, including Flutter (for tremelo/vibrato), Resample,
+	Feedback, Chorus, Reverb, StereoPan,...
+
+Tempo?
+
+//-----------------------
+Prelimary hierarchy
+
+*DigitalSource
+    *Constant
+    *Noise
+    *SineWave
+    *SquareWave
+    *TriangleWave
+    *SawToothWave
+    *SampleFile
+	*Raw8BitSample
+	Raw16BitSample
+	WAVSample
+	AUSample
+	VOCSample
+	MP3Sample
+    *Sample
+    Synthesiser?
+	FMSynthesiser
+	PCMSynthesiser?
+    *Filter
+        Resampler (like a Sampler, but an Effect; i.e. deletes its own source)
+	*Offset
+	*Loop
+	*Reverse
+	*Echo
+	*MultiEcho
+	*Amplifier
+        Delay
+	    Flanger
+	    Chorus
+	    Reverb
+	Feedback
+        HighPass
+        LowPass
+        *Envelope
+	    *ClipEnvelope
+	    *REnvelope
+	    *SREnvelope
+	    *ADSREnvelope
+	    ExpEnvelope
+        *Modulator
+	    *Adder
+	    *Subtractor
+	    *Multiplier
+	    Tremelo?
+	    Vibrato?
+	*FrequencyShifter
+            *Transposer
+    *Mixer
+        StereoMixer
+    *Sequence
+	*PianoModeSequence
+	*RetriggerModeSequence
+
+//------------------------------------
+
+*Player
+    FilePlayer
+    *DSP
+	MonoDSP
+	StereoDSP
+    
+
+
+

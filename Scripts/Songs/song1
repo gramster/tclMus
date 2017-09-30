@@ -1,0 +1,33 @@
+#!/usr/local/bin/tclmus
+
+set auto_path "../Utils"
+
+puts "Constructing song..."
+
+set p1 [source ../Patterns/p1.tcl]
+set p2 [source ../Patterns/p2.tcl]
+set p3 [source ../Patterns/p3.tcl]
+set p4 [source ../Patterns/p4.tcl]
+
+set blk [makesequence multi]
+addsource $blk [clonesound $p2] 0
+addsource $blk [clonesound $p1] 64000
+addsource $blk [clonesound $p2] 64000
+addsource $blk [clonesound $p1] 128000
+addsource $blk [clonesound $p2] 128000
+addsource $blk [clonesound $p3] 128000
+addsource $blk [clonesound $p4] 128000
+addsource $blk [clonesound $p1] 192000
+addsource $blk [clonesound $p2] 192000
+addsource $blk [clonesound $p3] 192000
+addsource $blk [clonesound $p4] 192000
+
+puts [format "Song length %d" [soundlength $blk]]
+puts "Expanding song to soundwave. This may take a while..."
+set normalisedsong [makefilter amplifier $blk 25]
+set song [expandsound $normalisedsong]
+puts "Construction complete"
+playsound $song
+destroysound $song $normalisedsong $p1 $p2 $p3 $p4
+showsounds
+

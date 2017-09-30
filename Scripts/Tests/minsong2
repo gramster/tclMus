@@ -1,0 +1,37 @@
+#!./tclmus
+
+proc Note {instrument note octave} {
+    set note [string first $note "cCdDefFgGaAb" ]
+    puts "Adding note $instrument $note $octave"
+    set rtn [makefilter transpose [clonesound $instrument] $note $octave]
+    return [makefilter srenv $rtn [soundlength $rtn] 1000 2000]
+}
+
+proc MakeSequence {instrument mode notelength notes} {
+    set rtn [makesequence $mode]
+    set tick 0
+    foreach p $notes {
+    	set note [string index $p 0]
+    	set octave [string index $p 1]
+    	set sound [Note $instrument $note $octave]
+    	addsource $rtn $sound $tick
+    	incr tick $notelength
+    }
+    return $rtn
+}
+
+puts "Constructing..."
+set synth [makesound sample high77.8] 
+set pattern [MakeSequence $synth piano 1000 {
+		c0 c1 c2 c3 c4 c5 c6 c7
+	     } ]
+
+set song [makefilter clipenv $pattern [soundlength $pattern] 10000]
+set softsong [makefilter amplifier $song 35]
+puts "Construction complete"
+playsound $softsong
+destroysound $softsong $synth
+
+
+
+

@@ -1,0 +1,123 @@
+#!./tclmus
+
+set bits 8
+set rate 8000
+
+proc Note {instrument note octave sustain release} {
+    set note [string first $note "cCdDefFgGaAb" ]
+    puts "Adding note $instrument $note $octave"
+    set rtn [makefilter transpose [clonesound $instrument] $note $octave]
+    return [makefilter srenv $rtn [soundlength $rtn] $sustain $release]
+}
+
+proc MakeSequence {instrument mode notelength sustain release notes} {
+    global bits rate
+    set rtn [makesequence $mode]
+    set cvt [expr $rate / 8]
+    set sustain [expr $sustain*$cvt/$notelength]
+    set release [expr $release*$cvt/$notelength]
+    set tick 0
+    foreach p $notes {
+	if { $p != "-" } {
+    	    set note [string index $p 0]
+    	    set octave [string index $p 1]
+    	    set sound [Note $instrument $note $octave $sustain $release]
+    	    addsource $rtn $sound $tick
+	}
+    	incr tick $cvt
+    }
+    return $rtn
+}
+
+puts "Constructing song..."
+
+set keyboard [makesound sample syncomp.wav] 
+set bassguitar [makesound sample jazzbass.wav]
+set bassdrum [makesound sample v31_bd1.wav]
+set snaredrum [makesound sample v31_sd1.wav]
+set hihat [makesound sample v31_hh2.wav]
+
+set p1 [MakeSequence $keyboard piano 1000 1000 1000 {
+		a2 c1 c1 f0 c1 c1 f0 e2
+		c2 c2 d1 d2 g1 f2 e2 f1
+		b2 d1 a2 a2 c1 a2 b1 f2
+		d2 f2 d2 c2 a2 g2 e2 f2
+		a2 c1 c1 b0 c1 c1 c0 e2
+		c2 c2 d1 d2 e1 f2 e2 f1
+		b2 f1 a2 a2 f1 a2 f1 g2
+		d2 g2 g2 d2 f2 e2 f2 c2
+	     } ]
+
+set p2 [MakeSequence $bassguitar multi 1000 1000 2000 {
+		g1 -  g1 g1 g1 -  g1 g1
+		g1 g1 -  g1 g1 -  g1 -
+		d1 d1 -  d1 d1 -  d1 d1
+		d1 -  d1 -  d1 d1 d1 -
+		e1 e1 e1 -  e1 e1 -  e1
+		-  e1 e1 e1 e1 -e1 e1 -
+		-  a1 -  a1 a1 a1 -  a1
+		-  a1 a1 -  a1 a1 a1 a1
+	     } ]
+
+set p3_1 [MakeSequence $bassdrum multi 1000 2000 1000 {
+		c2 -  -  -  -  -  -  -
+		c2 -  -  -  -  -  -  -
+		c2 -  -  c2 -  -  -  -
+		c2 -  c2 -  -  -  -  -
+		c2 -  -  -  -  -  -  -
+		c2 -  c2 -  -  -  -  -
+		c2 -  -  c2 -  -  -  c2
+		c2 -  -  c2 -  -  -  -
+	     } ]
+
+set p3_2 [MakeSequence $snaredrum multi 1000 2000 1000 {
+		-  -  -  -  c2 -  -  -
+		-  -  -  -  c2 -  -  -
+		-  -  -  -  c2 -  -  -
+		-  -  -  -  c2 -  -  c2
+		-  -  -  -  c2 -  -  -
+		-  -  -  -  c2 -  -  -
+		-  -  -  -  c2 -  -  -
+		-  -  -  -  c2 -  c2 -
+	     } ]
+
+set p3 [makemixer 2]
+setinput $p3 1 $p3_1
+setinput $p3 2 $p3_2
+
+set p4 [MakeSequence $hihat multi 1000 375 375 {
+		c2 c2 c2 -  c2 c2 c2 c2
+		-  c2 c2 -  c2 c2 c2 c2
+		c2 -  c2 -  c2 c2 c2 c2
+		-  c2 c2 -  c2 c2 c2 c2
+		c2 -  c2 -  c2 c2 c2 c2
+		-  c2 c2 -  c2 c2 -  c2
+		c2 -  c2 -  c2 c2 -  c2
+		-  c2 c2 c2 c2 c2 c2 c2
+	     } ]
+
+set blk [makesequence multi]
+addsource $blk [clonesound $p2] 0
+addsource $blk [clonesound $p1] 64000
+addsource $blk [clonesound $p2] 64000
+addsource $blk [clonesound $p1] 128000
+addsource $blk [clonesound $p2] 128000
+addsource $blk [clonesound $p3] 128000
+addsource $blk [clonesound $p4] 128000
+addsource $blk [clonesound $p1] 192000
+addsource $blk [clonesound $p2] 192000
+addsource $blk [clonesound $p3] 192000
+addsource $blk [clonesound $p4] 192000
+
+puts [format "Song length %d" [soundlength $blk]]
+puts "Expanding song to soundwave. This may take a while..."
+set normalisedsong [makefilter amplifier $blk 25]
+set song [expandsound $normalisedsong]
+puts "Construction complete"
+playsound $song
+destroysound $song $normalisedsong $p1 $p2 $p3 $p4
+showsounds
+
+
+
+

@@ -1,0 +1,32 @@
+#!./tclmus
+
+proc playrawsample {sname sbits srate bits rate} {
+    set wave [makesound sample $sname $sbits $srate]
+    playsound $bits $rate $wave
+    destroysound $wave
+}
+
+proc playwavsample {sname bits rate} {
+    set wave [makesound sample $sname $bits $rate]
+    playsound $wave
+    plotsound $wave
+    destroysound $wave
+}
+
+#playwavsample "v31_aggh.wav" 16 44100
+#playwavsample "chillout.wav" 8 11025
+#playwavsample "chillout.wav" 8 44100
+#playwavsample "chillout.wav" 16 44100
+#playwavsample "chillout.wav" 16 11025
+#playrawsample "high77.12" 12 8000 16 44100
+playrawsample "high77.8" 8 8000 8 8000
+playrawsample "high77.8" 8 8000 16 8000
+playrawsample "high77.8" 8 8000 8 44100
+playrawsample "high77.8" 8 8000 16 44100
+
+#playwavsample "v31_aggh.wav" 16 44100
+#playwavsample "v31_aggh.wav" 8 44100
+#playwavsample "v31_aggh.wav" 16 8000
+#playwavsample "v31_aggh.wav" 8 8000
+
+
